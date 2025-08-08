@@ -7,12 +7,29 @@ datasource db {
   url      = env("POSTGRES_URL")
 }
 
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  name String
+  stripeAccountId String @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  events Event[]
+
+  @@map("users") // lowercase table name
+
+}
 model Event {
   id          String   @id @default(cuid())
   name        String
   description String
   price       Float
+  hostId String
+  host User @relation(fields: [hostId], references: [id])
   date        DateTime
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  @@map("events") // lowercase table name
+
 }
