@@ -7,9 +7,12 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "prisma:reset": "prisma migrate reset --force",
     "prisma:validate": "npx prisma validate",
     "prisma:studio": "prisma studio",
-    "prisma:deploy": "prisma migrate deploy"
+    "prisma:generate": "prisma generate",
+    "prisma:deploy": "prisma migrate deploy dev",
+    "prisma:migrate": "prisma migrate dev"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
@@ -18,6 +21,7 @@
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "bcryptjs": "^3.0.2",
     "eslint": "^8",
     "eslint-config-next": "14.0.4",
     "next": "^15.4.4",

@@ -1,15 +1,24 @@
 import { NextResponse } from 'next/server';
 import prisma from '../../../lib/db';
+import bcrypt from "bcryptjs";
+
 
 export async function POST(request: Request) {
   try {
-    const { email, name } = await request.json();
+    const { email, password } = await request.json();
     if (!email) return NextResponse.json({ error: 'Email is required' }, { status: 400 });
 
     let user = await prisma.user.findUnique({ where: { email } });
+  
     if (!user) {
       // throw error
       throw new Error('User not found');
+    }
+
+    //decrypt password
+    const decryptedPassword = bcrypt.compareSync(password, user?.password);
+    if (!decryptedPassword) {
+      throw new Error('Incorrect password');
     }
     
     const res = NextResponse.json({ id: user.id, email: user.email, stripeAccountId: user.stripeAccountId });
