@@ -27,7 +27,7 @@ export async function POST(request: Request) {
       }
     });
     
-    const res = NextResponse.json({ id: newUser.id, email: newUser.email, stripeAccountId: newUser.stripeAccountId });
+    const res = NextResponse.json({ id: newUser.id, email: newUser.email, name: newUser.name, stripeAccountId: newUser.stripeAccountId });
     res.cookies.set('userId', newUser.id, { httpOnly: true, path: '/' });
     return res;
   } catch (e: any) {

@@ -3,11 +3,13 @@
 import { useState, FormEvent } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useUser } from "../context/UserContext";
 
 export default function SignupPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const next = searchParams.get("next") || "/";
+  const { setUser } = useUser();
 
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
@@ -30,7 +32,15 @@ export default function SignupPage() {
         body: JSON.stringify({ email, name, password }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data?.error || "Login failed");
+      if (!res.ok) throw new Error(data?.error || "Signup failed");
+
+      // Set user in context
+      setUser({
+        id: data.id,
+        email: data.email,
+        name: data.name,
+        stripeAccountId: data.stripeAccountId,
+      });
 
       setMessage({ type: "success", text: "Signed up successfully" });
       // Give the cookie a moment then redirect

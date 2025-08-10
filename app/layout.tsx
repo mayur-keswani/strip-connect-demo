@@ -1,4 +1,6 @@
 import './globals.css';
+import { UserProvider } from './context/UserContext';
+import Header from './components/Header';
 
 export const metadata = {
   title: 'Event Booking Demo',
@@ -12,7 +14,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="antialiased">{children}</body>
+      <body className="antialiased">
+        <UserProvider>
+          <Header />
+          <main>{children}</main>
+        </UserProvider>
+      </body>
     </html>
   )
 }

@@ -3,11 +3,13 @@
 import { useState, FormEvent } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useUser } from "../context/UserContext";
 
 export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const next = searchParams.get("next") || "/";
+  const { setUser } = useUser();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -30,6 +32,14 @@ export default function LoginPage() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error || "Login failed");
+
+      // Set user in context
+      setUser({
+        id: data.id,
+        email: data.email,
+        name: data.name,
+        stripeAccountId: data.stripeAccountId,
+      });
 
       setMessage({ type: "success", text: "Logged in successfully" });
       // Give the cookie a moment then redirect
