@@ -23,7 +23,7 @@ export async function POST(request: Request) {
         email,
         name,
         password: decryptedPassword,
-        stripeAccountId: "",
+        stripeAccountId: null,
       }
     });
     

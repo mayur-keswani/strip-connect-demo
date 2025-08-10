@@ -21,7 +21,7 @@ export async function POST(request: Request) {
       throw new Error('Incorrect password');
     }
     
-    const res = NextResponse.json({ id: user.id, email: user.email, name: user.name, stripeAccountId: user.stripeAccountId });
+    const res = NextResponse.json({ id: user.id, email: user.email, name: user.name, stripeAccountId: user.stripeAccountId, isOnboarded: user.isOnboarded });
     res.cookies.set('userId', user.id, { httpOnly: true, path: '/' });
     return res;
   } catch (e: any) {

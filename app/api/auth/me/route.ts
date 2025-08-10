@@ -18,6 +18,7 @@ export async function GET() {
         email: true,
         name: true,
         stripeAccountId: true,
+        isOnboarded: true
       },
     });
     

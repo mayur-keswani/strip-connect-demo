@@ -1,5 +1,15 @@
 import { NextResponse } from 'next/server';
 import prisma from '../../lib/db';
+import { cookies } from 'next/headers';
+
+async function requireUser() {
+  const cookieStore = await cookies();
+  const userId = cookieStore.get("userId")?.value;
+  if (!userId) throw new Error("Unauthorized");
+  const user = await prisma.user.findUnique({ where: { id: userId }, select: { id: true, stripeAccountId: true, email: true } });
+  if (!user) throw new Error("Unauthorized");
+  return user;
+}
 
 export async function GET() {
   try {
@@ -20,12 +30,14 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
+    const user = await requireUser();
     const body = await request.json();
     const newEvent = await prisma.event.create({
       data: {
         name: body.name,
         description: body.description,
         price: parseFloat(body.price),
+        hostId: user.id,
         date: new Date(body.date)
       }
     });

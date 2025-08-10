@@ -12,7 +12,8 @@ model User {
   email String @unique
   password String
   name String
-  stripeAccountId String @unique
+  stripeAccountId String? @unique 
+  isOnboarded Boolean @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   events Event[]

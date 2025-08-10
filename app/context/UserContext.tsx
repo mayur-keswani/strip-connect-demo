@@ -7,6 +7,7 @@ interface User {
   email: string;
   name?: string;
   stripeAccountId?: string;
+  isOnboarded?: boolean;
 }
 
 interface UserContextType {

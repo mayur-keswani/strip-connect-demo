@@ -61,6 +61,7 @@ export default function HostPage() {
   };
 
   const handleCreateConnect = async () => {
+    console.log("Creating connect account");
     if (!user) return;
     setIsCreatingAccount(true);
     setMessage(null);
@@ -70,6 +71,8 @@ export default function HostPage() {
       if (!res.ok) throw new Error(data.error || "Failed");
       // Update user with new stripe account ID
       setUser({ ...user, stripeAccountId: data.stripeAccountId });
+
+      window.location.href = data.link;
       setMessage({ type: "success", text: "Connect account ready" });
     } catch (e) {
       setMessage({ type: "error", text: "Failed to create/connect account" });
@@ -78,21 +81,7 @@ export default function HostPage() {
     }
   };
 
-  const handleOnboard = async () => {
-    setIsOnboarding(true);
-    setMessage(null);
-    try {
-      const res = await fetch("/api/stripe/account-link", { method: "POST" });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed");
-      window.location.href = data.url;
-    } catch (e) {
-      setMessage({ type: "error", text: "Failed to start onboarding" });
-    } finally {
-      setIsOnboarding(false);
-    }
-  };
-
+  console.log({ user });
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-2xl mx-auto">
@@ -132,6 +121,21 @@ export default function HostPage() {
           onSubmit={handleSubmit}
           className="space-y-6 bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10"
         >
+          <div className="flex gap-2">
+            {!user?.isOnboarded && (
+              <button
+                onClick={handleCreateConnect}
+                disabled={isCreatingAccount}
+                className={`px-3 py-2 text-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 ${
+                  isCreatingAccount ? "opacity-75" : ""
+                }`}
+              >
+                {isCreatingAccount
+                  ? "Creating Strip Account..."
+                  : "Create Connect Account"}
+              </button>
+            )}
+          </div>
           <div>
             <label
               htmlFor="name"
@@ -227,9 +231,11 @@ export default function HostPage() {
           <div>
             <button
               type="submit"
-              disabled={isSubmitting}
-              className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${
-                isSubmitting ? "opacity-75 cursor-not-allowed" : ""
+              disabled={!user?.stripeAccountId || isSubmitting}
+              className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500${
+                !user?.stripeAccountId || isSubmitting
+                  ? "bg-indigo-400 opacity-75 cursor-not-allowed focus:ring-indigo-300"
+                  : ""
               }`}
             >
               {isSubmitting ? "Creating Event..." : "Create Event"}
