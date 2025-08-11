@@ -1,13 +1,16 @@
 import { NextResponse } from 'next/server';
-import stripe from '../../lib/stripe';
-import prisma from '../../lib/db';
+import stripe from '../../../lib/stripe';
+import prisma from '../../../lib/db';
 
 export async function POST(request: Request) {
   try {
     const { eventId } = await request.json();
     
     const event = await prisma.event.findUnique({
-      where: { id: eventId }
+      where: { id: eventId },
+      include: {
+        host: true,
+      },
     });
     if (!event) {
       return NextResponse.json(
@@ -18,7 +21,7 @@ export async function POST(request: Request) {
 
     // Create a PaymentIntent with the order amount and currency
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: Math.round(parseFloat(event.price) * 100), // Convert to cents
+      amount: Math.round(event.price * 100), // Convert to cents
       currency: 'usd',
       // In production, you would set the application_fee_amount
       // application_fee_amount: Math.round(parseFloat(event.price) * 100 * 0.1), // 10% platform fee
@@ -27,11 +30,11 @@ export async function POST(request: Request) {
       },
       metadata: {
         eventId,
-        hostId: 'host_id', // In production, this would be the actual host's ID
+        hostId: event.host.id, // In production, this would be the actual host's ID
       },
       transfer_data: {
         // In production, this would be the host's Stripe Connect account ID
-        destination: 'acct_your_connected_account_id',
+        destination: event.host.stripeAccountId,
       },
     });
 

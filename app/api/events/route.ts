@@ -13,12 +13,31 @@ async function requireUser() {
 
 export async function GET() {
   try {
+    const user = await requireUser();
     const events = await prisma.event.findMany({
       orderBy: {
         date: 'asc'
-      }
+      },
     });
-    return NextResponse.json(events);
+
+    // Check if user has booked each event
+    const eventsWithBookingStatus = await Promise.all(
+      events.map(async (event) => {
+        const booking = await prisma.eventBooking.findFirst({
+          where: {
+            eventId: event.id,
+            userId: user.id
+          }
+        });
+        
+        return {
+          ...event,
+          isBooked: !!booking
+        };
+      })
+    );
+    
+    return NextResponse.json(eventsWithBookingStatus);
   } catch (error) {
     console.error('Error fetching events:', error);
     return NextResponse.json(

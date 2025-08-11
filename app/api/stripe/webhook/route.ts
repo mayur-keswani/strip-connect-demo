@@ -53,15 +53,10 @@ export async function POST(request: Request) {
     console.log("Event type:", event.type);
     // Handle different event types
     switch (event.type) {
-      case "customer.created":
-        {
-          await handleCustomerCreated(event.data.object as Stripe.Customer);
-        }
-        break;
       case "account.updated":
         {
           console.log("Processing account.updated", event);
-          await handleCustomerCreated(event.data.object as any);
+          await handleAccountUpdated(event.data.object as any);
         }
         break;
 
@@ -93,25 +88,25 @@ export async function POST(request: Request) {
   }
 }
 
-async function handleCustomerCreated(customer: any) {
+async function handleAccountUpdated(account: any) {
   try {
-    if (customer.id && customer.charges_enabled && customer.payouts_enabled) {
+    if (account.id && account.charges_enabled && account.payouts_enabled) {
       console.log(
-        `Processing customer.created for user: ${customer.metadata.userId}`
+        `Processing account.updated for user: ${account.metadata.userId}`
       );
 
       await prisma.user.update({
-        where: { stripeAccountId: customer.id },
+        where: { stripeAccountId: account.id },
         data: {
           isOnboarded: true,
-          stripeAccountId: customer.id,
+          stripeAccountId: account.id,
         },
       });
 
-      console.log(`User ${customer.metadata.userId} onboarded successfully`);
+      console.log(`User ${account.metadata.userId} onboarded successfully`);
     }
   } catch (error) {
-    console.error("Error handling customer.created:", error);
+    console.error("Error handling account.updated:", error);
     throw error;
   }
 }
@@ -119,8 +114,17 @@ async function handleCustomerCreated(customer: any) {
 async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   try {
     console.log(`Processing checkout.session.completed: ${session.id}`);
+    console.log({session});
     // Add your checkout completion logic here
     // e.g., create ticket records, send confirmation emails, etc.
+    await prisma.eventBooking.create({
+      data: {
+        eventId: session.metadata!.eventId!,
+        userId: session.metadata!.userId!,
+        stripePaymentId: session.payment_intent as string,
+        checkoutSessionId: session.id,
+      },
+    });
   } catch (error) {
     console.error("Error handling checkout.session.completed:", error);
     throw error;

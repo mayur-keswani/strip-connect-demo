@@ -20,6 +20,7 @@ model User {
 
   @@map("users") // lowercase table name
 
+  EventBooking EventBooking[]
 }
 model Event {
   id          String   @id @default(cuid())
@@ -34,4 +35,20 @@ model Event {
 
   @@map("events") // lowercase table name
 
+  EventBooking EventBooking[]
+}
+
+model EventBooking {
+  id String @id @default(cuid())
+  eventId String
+  event Event @relation(fields: [eventId], references: [id])
+  userId String
+  user User @relation(fields: [userId], references: [id])
+
+  stripePaymentId String
+  checkoutSessionId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("event_bookings") // lowercase table name
 }

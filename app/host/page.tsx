@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, FormEvent } from "react";
+import { useState, FormEvent, useEffect } from "react";
 import Link from "next/link";
 import { useUser } from "../context/UserContext";
 interface Event {
@@ -73,13 +73,21 @@ export default function HostPage() {
       setUser({ ...user, stripeAccountId: data.stripeAccountId });
 
       window.location.href = data.link;
-      setMessage({ type: "success", text: "Connect account ready" });
     } catch (e) {
       setMessage({ type: "error", text: "Failed to create/connect account" });
     } finally {
       setIsCreatingAccount(false);
     }
   };
+
+  useEffect(()=>{
+    const urlParams = new URLSearchParams(window.location.search);
+    const onboarding = urlParams.get('onboarding');
+    console.log({onboarding})
+    if(onboarding === 'true'){
+      setMessage({ type: "success", text: "Connect Account Created Successfully!" });
+    }
+  },[]) //read query params
 
   console.log({ user });
   return (

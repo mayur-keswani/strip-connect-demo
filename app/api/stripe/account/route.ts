@@ -7,7 +7,10 @@ async function requireUser() {
   const cookieStore = await cookies();
   const userId = cookieStore.get("userId")?.value;
   if (!userId) throw new Error("Unauthorized");
-  const user = await prisma.user.findUnique({ where: { id: userId }, select: { id: true, stripeAccountId: true, email: true } });
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { id: true, stripeAccountId: true, email: true },
+  });
   if (!user) throw new Error("Unauthorized");
   return user;
 }
@@ -47,8 +50,8 @@ export async function POST(request: Request) {
 
     const link = await stripe.accountLinks.create({
       account: accountId,
-      refresh_url: `${origin}/host?onboarding=refresh`,
-      return_url: `${origin}/host?onboarding=return`,
+      refresh_url: `${origin}/host?onboarding=success`,
+      return_url: `${origin}/host?onboarding=success`,
       type: "account_onboarding",
     });
 
@@ -58,7 +61,6 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: e.message ?? "Failed" }, { status: 500 });
   }
 }
-
 
 export async function DELETE(request: Request) {
   try {
