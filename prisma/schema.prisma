@@ -30,6 +30,7 @@ model Event {
   hostId String
   host User @relation(fields: [hostId], references: [id])
   date        DateTime
+  status String @default("pending")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
