@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { loadStripe } from "@stripe/stripe-js";
 import Link from "next/link";
+import { useUser } from "../context/UserContext";
 
 interface Event {
   isBooked: any;
@@ -11,6 +12,8 @@ interface Event {
   description: string;
   price: number;
   date: string;
+  status: string;
+  hostId: string;
 }
 
 // Initialize Stripe
@@ -22,7 +25,8 @@ if (!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY) {
   console.error("Warning: NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY is not set");
 }
 
-export default function GuestPage() {
+export default function EventsPage() {
+  const { user } = useUser();
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -82,6 +86,23 @@ export default function GuestPage() {
     }
   };
 
+  const markEventAsCompleted = async (eventId: string) => {
+    try {
+      const response = await fetch(`/api/events/mark-as-completed`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ eventId, status: "completed" }),
+      });
+
+      if (!response.ok) throw new Error("Failed to mark event as completed");
+
+      const data = await response.json();
+      console.log("Event marked as completed:", data);
+    } catch (error) {
+      console.error("Error marking event as completed:", error);
+      setError("Failed to mark event as completed. Please try again.");
+    }
+  };
 
   if (loading) {
     return (
@@ -91,7 +112,7 @@ export default function GuestPage() {
     );
   }
 
-  
+
 
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -163,6 +184,7 @@ export default function GuestPage() {
                 key={event.id}
                 className="bg-white overflow-hidden shadow rounded-lg divide-y divide-gray-200"
               >
+                
                 <div className="px-4 py-5 sm:p-6">
                   <h3 className="text-lg leading-6 font-medium text-gray-900">
                     {event.name}
@@ -194,7 +216,7 @@ export default function GuestPage() {
                     </div>
                   </div>
                 </div>
-                {!event.isBooked && (
+                {!event.isBooked && event.status === "pending" && (
                   <div className="px-4 py-4 sm:px-6">
                     <button
                       onClick={() => handleBooking(event.id)}
@@ -234,6 +256,32 @@ export default function GuestPage() {
                     </button>
                   </div>
                 )}
+
+                {event?.hostId === user?.id && event.status === "pending" && (
+                  <div className="px-4 py-4 sm:px-6">
+                    <button
+                      onClick={() => markEventAsCompleted(event.id)}
+                      disabled={bookingId === event.id}
+                      className={`w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${
+                        bookingId === event.id
+                          ? "opacity-75 cursor-not-allowed"
+                          : ""
+                      }`}
+                    >
+                      "Mark as Completed"
+                    </button>
+                  </div>
+                )}
+
+                {
+                  event.status === "completed" && (
+                    <div className="px-4 py-4 sm:px-6">
+                      <p className="text-sm text-gray-500">
+                        Event completed
+                      </p>
+                    </div>
+                  )
+                }
               </div>
             ))}
           </div>

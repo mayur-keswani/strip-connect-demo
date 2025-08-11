@@ -40,7 +40,6 @@ export async function POST(request: Request) {
 
     // Calculate application fee (10% of the ticket price)
     const amount = Math.round(event.price * 100); // Convert to cents
-    const applicationFeeAmount = Math.round(amount * 0.1); // 10% fee
 
     // Create Stripe checkout session
     const session = await stripe.checkout.sessions.create({
@@ -59,19 +58,13 @@ export async function POST(request: Request) {
           quantity: 1,
         },
       ],      
-      payment_intent_data: {
-        application_fee_amount: applicationFeeAmount,
-        transfer_data: {
-          destination: event.host.stripeAccountId, // We'll need to add this field to the Event model
-        },
-      },
       metadata: {
         eventId,
         userId: user.id,
         hostId: event.host.id,
       },
-      success_url: `${origin}/guest?success=true&session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${origin}/guest?success=false`,
+      success_url: `${origin}/events?success=true&session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${origin}/events?success=false`,
     });
 
     return NextResponse.json({ sessionId: session.id });

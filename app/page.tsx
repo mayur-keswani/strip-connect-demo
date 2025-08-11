@@ -6,9 +6,6 @@ export default function HomePage() {
     <div className="min-h-screen bg-gradient-to-b from-indigo-50 via-white to-indigo-50 py-20 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto">
         <div className="text-center space-y-6">
-          <h1 className="text-5xl sm:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">
-            Event Booking Demo
-          </h1>
           <p className="text-lg text-gray-500 max-w-xl mx-auto">
             Choose your role to get started
           </p>
@@ -18,16 +15,16 @@ export default function HomePage() {
           <RoleCard
             href="/host"
             title="Host Dashboard"
-            description="Create and manage your events"
+            description="Create New Events"
             gradientFrom="indigo-50"
             gradientTo="indigo-100"
             iconColor="indigo-600"
             Icon={CalendarDaysIcon}
           />
           <RoleCard
-            href="/guest"
-            title="Guest Dashboard"
-            description="Browse and book event tickets"
+            href="/events"
+            title="Events"
+            description="Browse and book events"
             gradientFrom="purple-50"
             gradientTo="purple-100"
             iconColor="purple-600"
