@@ -30,6 +30,12 @@ export default function GuestPage() {
 
   useEffect(() => {
     fetchEvents();
+    const url = new URL(window.location.href);
+    const success = url.searchParams.get("success");
+    const sessionId = url.searchParams.get("session_id");
+    if (success && sessionId) {
+      alert("Event booked successfully");
+    }
   }, []);
 
   const fetchEvents = async () => {
@@ -76,15 +82,6 @@ export default function GuestPage() {
     }
   };
 
-  useEffect(() => {
-    //fetch success from query params
-    const url = new URL(window.location.href);
-    const success = url.searchParams.get("success");
-    const sessionId = url.searchParams.get("session_id");
-    if (success && sessionId) {
-      alert("Event booked successfully");
-    }
-  }, []);
 
   if (loading) {
     return (
