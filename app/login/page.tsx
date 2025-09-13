@@ -31,6 +31,8 @@ function LoginForm() {
         body: JSON.stringify({ email, password }),
       });
       const data = await res.json();
+      console.log(data);
+
       if (!res.ok) throw new Error(data?.error || "Login failed");
 
       // Set user in context
@@ -57,15 +59,15 @@ function LoginForm() {
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-gray-900">Login</h1>
           <p className="text-sm text-gray-600 mt-1">
-            Enter your email to continue. New here? <Link href={`/signup?next=${encodeURIComponent(next)}`} className="text-indigo-600 hover:underline">Create an account</Link>
+            Enter your email to continue. New here?{" "}
+            <Link href={`/signup?next=${encodeURIComponent(next)}`} className="text-indigo-600 hover:underline">
+              Create an account
+            </Link>
           </p>
         </div>
 
         {message && (
-          <div
-            className={`rounded-md p-3 mb-4 ${message.type === "success" ? "bg-green-50 text-green-800" : "bg-red-50 text-red-800"}`}
-            role="alert"
-          >
+          <div className={`rounded-md p-3 mb-4 ${message.type === "success" ? "bg-green-50 text-green-800" : "bg-red-50 text-red-800"}`} role="alert">
             <p className="text-sm font-medium">{message.text}</p>
           </div>
         )}
@@ -101,18 +103,16 @@ function LoginForm() {
             />
           </div>
 
-          
-
           <button
             type="submit"
             disabled={isSubmitting}
-            className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${isSubmitting ? "opacity-75 cursor-not-allowed" : ""}`}
+            className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${
+              isSubmitting ? "opacity-75 cursor-not-allowed" : ""
+            }`}
           >
             {isSubmitting ? "Signing in..." : "Sign in"}
           </button>
         </form>
-
-       
       </div>
     </div>
   );
@@ -120,7 +120,13 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 flex items-center justify-center"><div className="text-gray-600">Loading...</div></div>}>
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
+          <div className="text-gray-600">Loading...</div>
+        </div>
+      }
+    >
       <LoginForm />
     </Suspense>
   );
