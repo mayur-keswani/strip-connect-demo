@@ -35,34 +35,30 @@ Generate clean, minimal, and maintainable UI components using **Tailwind CSS**, 
   - Check `tailwind.config.js` for custom values inside `theme.extend`.
   - Use custom tokens defined there (e.g., `bg-primary`, `text-accent`).
 
-#### Example:
-```js
-// tailwind.config.js
-theme: {
-  extend: {
-    colors: {
-      primary: '#123456',
+  #### Example:
+  ```js
+  // tailwind.config.js
+  theme: {
+    extend: {
+      colors: {
+        primary: '#123456',
+      },
+      spacing: {
+        '18': '4.5rem',
+      },
     },
-    spacing: {
-      '18': '4.5rem',
-    },
-  },
-}
-```
+  }
+  ```
 
-#### ✅ Then use:
-```html
-class="bg-primary px-18"
-```
+  #### ✅ Then use:
+  ```html
+  class="bg-primary px-18"
+  ```
 
-### 5. 🚫 Avoid These
-- ❌ Inline styles (`style={{}}`)
-- ❌ Arbitrary Tailwind values (e.g., `text-[14px]`, `m-[6px]`)
-- ❌ Unnecessary wrapper elements:
-  - `div.wrapper`
-  - `div.container`
-  - `div.flex-box`
-  unless clearly present in Figma design.
+### 5. 🚫 Avoid Console Logs
+- Do not add console logs in the code
+
+
 
 
 ## ✅ Output Expectations
