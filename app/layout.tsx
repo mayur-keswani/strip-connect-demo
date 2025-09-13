@@ -1,5 +1,6 @@
 import './globals.css';
 import { UserProvider } from './context/UserContext';
+import { ThemeProvider } from './context/ThemeContext';
 import Header from './components/Header';
 
 export const metadata = {
@@ -13,11 +14,13 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <body>
+    <html lang="en" suppressHydrationWarning>
+      <body className="bg-white dark:bg-gray-900 transition-colors duration-200">
         <UserProvider>
-          <Header />
-          <main>{children}</main>
+          <ThemeProvider>
+            <Header />
+            <main className="min-h-screen">{children}</main>
+          </ThemeProvider>
         </UserProvider>
       </body>
     </html>
