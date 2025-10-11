@@ -6,6 +6,7 @@ import bcrypt from "bcryptjs";
 export async function POST(request: Request) {
   try {
     const { email, password } = await request.json();
+    console.log(email);
     if (!email) return NextResponse.json({ error: 'Email is required' }, { status: 400 });
 
     let user = await prisma.user.findUnique({ where: { email } });
