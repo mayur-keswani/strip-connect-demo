@@ -3,3 +3,10 @@ node_modules
 .env
 .next/*
 /app/generated/prisma
+
+
+.github/*
+# gemini-cli settings
+
+# GitHub App credentials
+gha-creds-*.json
