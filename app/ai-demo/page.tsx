@@ -8,7 +8,7 @@ function AIPage() {
     return (
     <div>
       <h1>AI Page</h1>
-      <button>{buttonText}</button>
+      <button>{buttonText} {loading ? "Loading..." : ""}</button>
     </div>
     );
   }
