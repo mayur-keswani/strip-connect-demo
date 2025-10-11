@@ -1,12 +1,5 @@
 node_modules
 # Keep environment variables out of version control
-.env
 .next/*
 /app/generated/prisma
-
-
-.github/*
-# gemini-cli settings
-
-# GitHub App credentials
-gha-creds-*.json
+config.bat
